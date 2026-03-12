@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { recipeAPI } from "../services/api";
+import axios from "axios";
 
 const EditRecipe = () => {
+  const { id } = useParams(); // MongoDB _id
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
     ingredients: "",
@@ -10,57 +13,56 @@ const EditRecipe = () => {
     category: "",
     instructions: "",
   });
+
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const navigate = useNavigate();
-  const { id } = useParams();
-
+  // Fetch recipe details on mount
   useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        setFetchLoading(true);
+        const response = await axios.get(`http://localhost:5000/api/recipes/${id}`);
+        setFormData({
+          name: response.data.name || "",
+          ingredients: response.data.ingredients || "",
+          time: response.data.time || "",
+          category: response.data.category || "",
+          instructions: response.data.instructions || "",
+        });
+        setError(null);
+      } catch (err) {
+        setError("Failed to fetch recipe. Please try again. 😔");
+        console.error("Error fetching recipe:", err);
+      } finally {
+        setFetchLoading(false);
+      }
+    };
+
     fetchRecipe();
   }, [id]);
 
-  const fetchRecipe = async () => {
-    try {
-      setFetchLoading(true);
-      const response = await recipeAPI.getRecipeById(id);
-      setFormData(response.data);
-      setError(null);
-    } catch (err) {
-      setError("Failed to fetch recipe. Please try again. 😔");
-      console.error("Error fetching recipe:", err);
-    } finally {
-      setFetchLoading(false);
-    }
-  };
-
+  // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      !formData.name ||
-      !formData.ingredients ||
-      !formData.time ||
-      !formData.category ||
-      !formData.instructions
-    ) {
-      setError("Please fill in all fields 📝");
+    // Validation
+    if (!formData.name || !formData.ingredients || !formData.instructions) {
+      setError("Please fill in all required fields 📝");
       return;
     }
 
     try {
       setLoading(true);
-      await recipeAPI.updateRecipe(id, formData);
-      navigate("/");
+      await axios.put(`http://localhost:5000/api/recipes/${id}`, formData);
+      navigate("/"); // redirect after successful update
     } catch (err) {
       setError("Failed to update recipe. Please try again. 😔");
       console.error("Error updating recipe:", err);
@@ -71,48 +73,35 @@ const EditRecipe = () => {
 
   if (fetchLoading) {
     return (
-      <div className="edit-recipe-page">
-        <div className="loading">
-          <div>🍳 Loading recipe details...</div>
-        </div>
+      <div className="loading">
+        🍳 Loading recipe details...
       </div>
     );
   }
 
   return (
     <div className="edit-recipe-page">
-      <div className="page-header">
-        <h1>✏️ Edit Recipe</h1>
-        <Link to="/" className="btn-back">
-          ← Back to Vault
-        </Link>
-      </div>
+      <h1>✏️ Edit Recipe</h1>
+      <Link to="/">← Back to Vault</Link>
 
       {error && <div className="error-message">{error}</div>}
 
       <form onSubmit={handleSubmit} className="recipe-form">
         <div className="form-group">
-          <label htmlFor="name">🍽️ Recipe Name</label>
+          <label>🍽️ Recipe Name</label>
           <input
             type="text"
-            id="name"
             name="name"
             value={formData.name}
             onChange={handleChange}
-            placeholder="Enter your delicious recipe name..."
+            placeholder="Recipe name"
             required
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="category">📂 Category</label>
-          <select
-            id="category"
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            required
-          >
+          <label>📂 Category</label>
+          <select name="category" value={formData.category} onChange={handleChange}>
             <option value="">Select a category</option>
             <option value="breakfast">🍳 Breakfast</option>
             <option value="lunch">🥗 Lunch</option>
@@ -125,48 +114,43 @@ const EditRecipe = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="time">⏰ Cooking Time (minutes)</label>
+          <label>⏰ Cooking Time (minutes)</label>
           <input
             type="number"
-            id="time"
             name="time"
             value={formData.time}
             onChange={handleChange}
-            placeholder="How long will it take to cook?"
             min="1"
-            required
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="ingredients">🥘 Ingredients</label>
+          <label>🥘 Ingredients</label>
           <textarea
-            id="ingredients"
             name="ingredients"
             value={formData.ingredients}
             onChange={handleChange}
-            placeholder="List all ingredients needed (one per line or separated by commas)..."
             rows="4"
+            placeholder="List ingredients (comma separated or line by line)"
             required
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="instructions">📝 Instructions</label>
+          <label>📝 Instructions</label>
           <textarea
-            id="instructions"
             name="instructions"
             value={formData.instructions}
             onChange={handleChange}
-            placeholder="Step by step cooking instructions..."
             rows="6"
+            placeholder="Step by step instructions"
             required
           />
         </div>
 
         <div className="form-actions">
-          <button type="submit" className="btn-submit" disabled={loading}>
-            {loading ? "🔥 Updating Recipe..." : "✨ Update Recipe"}
+          <button type="submit" disabled={loading}>
+            {loading ? "🔥 Updating..." : "✨ Update Recipe"}
           </button>
           <Link to="/" className="btn-cancel">
             ❌ Cancel

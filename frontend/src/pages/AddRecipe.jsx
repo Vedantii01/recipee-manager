@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { recipeAPI } from "../services/api";
+import axios from "axios";
 
 const AddRecipe = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
     ingredients: "",
@@ -10,37 +12,28 @@ const AddRecipe = () => {
     category: "",
     instructions: "",
   });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const navigate = useNavigate();
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      !formData.name ||
-      !formData.ingredients ||
-      !formData.time ||
-      !formData.category ||
-      !formData.instructions
-    ) {
-      setError("Please fill in all fields 📝");
+    // Basic validation
+    if (!formData.name || !formData.ingredients || !formData.instructions) {
+      setError("Please fill in all required fields 📝");
       return;
     }
 
     try {
       setLoading(true);
-      await recipeAPI.createRecipe(formData);
-      navigate("/");
+      await axios.post("http://localhost:5000/api/recipes", formData);
+      navigate("/"); // go back to homepage after adding
     } catch (err) {
       setError("Failed to add recipe. Please try again. 😔");
       console.error("Error adding recipe:", err);
@@ -51,38 +44,27 @@ const AddRecipe = () => {
 
   return (
     <div className="add-recipe-page">
-      <div className="page-header">
-        <h1>🔥 Drop New Recipe</h1>
-        <Link to="/" className="btn-back">
-          ← Back to Vault
-        </Link>
-      </div>
+      <h1>🔥 Drop New Recipe</h1>
+      <Link to="/">← Back to Vault</Link>
 
       {error && <div className="error-message">{error}</div>}
 
       <form onSubmit={handleSubmit} className="recipe-form">
         <div className="form-group">
-          <label htmlFor="name">🍽️ Recipe Name</label>
+          <label>🍽️ Recipe Name</label>
           <input
             type="text"
-            id="name"
             name="name"
             value={formData.name}
             onChange={handleChange}
-            placeholder="Enter your delicious recipe name..."
+            placeholder="Recipe name"
             required
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="category">📂 Category</label>
-          <select
-            id="category"
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            required
-          >
+          <label>📂 Category</label>
+          <select name="category" value={formData.category} onChange={handleChange}>
             <option value="">Select a category</option>
             <option value="breakfast">🍳 Breakfast</option>
             <option value="lunch">🥗 Lunch</option>
@@ -95,47 +77,42 @@ const AddRecipe = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="time">⏰ Cooking Time (minutes)</label>
+          <label>⏰ Cooking Time (minutes)</label>
           <input
             type="number"
-            id="time"
             name="time"
             value={formData.time}
             onChange={handleChange}
-            placeholder="How long will it take to cook?"
             min="1"
-            required
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="ingredients">🥘 Ingredients</label>
+          <label>🥘 Ingredients</label>
           <textarea
-            id="ingredients"
             name="ingredients"
             value={formData.ingredients}
             onChange={handleChange}
-            placeholder="List all ingredients needed (one per line or separated by commas)..."
             rows="4"
+            placeholder="List ingredients (comma separated or line by line)"
             required
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="instructions">📝 Instructions</label>
+          <label>📝 Instructions</label>
           <textarea
-            id="instructions"
             name="instructions"
             value={formData.instructions}
             onChange={handleChange}
-            placeholder="Step by step cooking instructions..."
             rows="6"
+            placeholder="Step by step instructions"
             required
           />
         </div>
 
         <div className="form-actions">
-          <button type="submit" className="btn-submit" disabled={loading}>
+          <button type="submit" disabled={loading}>
             {loading ? "🔥 Dropping Recipe..." : "✨ Drop Recipe"}
           </button>
           <Link to="/" className="btn-cancel">

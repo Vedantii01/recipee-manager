@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import RecipeCard from "../components/RecipeCard";
-import { recipeAPI } from "../services/api";
 
 const Home = () => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchRecipes();
@@ -15,7 +17,7 @@ const Home = () => {
   const fetchRecipes = async () => {
     try {
       setLoading(true);
-      const response = await recipeAPI.getAllRecipes();
+      const response = await axios.get("http://localhost:5000/api/recipes");
       setRecipes(response.data);
       setError(null);
     } catch (err) {
@@ -28,7 +30,7 @@ const Home = () => {
 
   const handleDeleteRecipe = async (id) => {
     try {
-      await recipeAPI.deleteRecipe(id);
+      await axios.delete(`http://localhost:5000/api/recipes/${id}`);
       setRecipes(recipes.filter((recipe) => recipe._id !== id));
     } catch (err) {
       setError("Failed to delete recipe. Please try again.");
@@ -37,13 +39,13 @@ const Home = () => {
   };
 
   const handleEditRecipe = (recipe) => {
-    window.location.href = `/edit-recipe/${recipe._id}`;
+    navigate(`/edit-recipe/${recipe._id}`);
   };
 
   return (
     <div className="home-page">
       <div className="home-header">
-        <h1>🔥 Recipe Vault </h1>
+        <h1>🔥 Recipe Vault</h1>
         <Link to="/add-recipe" className="btn-add-recipe">
           ✨ Drop New Recipe
         </Link>
