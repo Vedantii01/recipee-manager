@@ -2,11 +2,13 @@ const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
-    await mongoose.connect("mongodb+srv://rutujab2021_db_user:xqo5jxeClSVrRolu@cluster0.pkeo5es.mongodb.net/?appName=Cluster0");
+    await mongoose.connect(
+      "mongodb+srv://rutujab2021_db_user:xqo5jxeClSVrRolu@cluster0.pkeo5es.mongodb.net/recipeDB"
+    );
 
     console.log("MongoDB Connected Successfully");
   } catch (error) {
-    console.log("Database Connection Failed");
+    console.log("Database Connection Failed", error);
     process.exit(1);
   }
 };
