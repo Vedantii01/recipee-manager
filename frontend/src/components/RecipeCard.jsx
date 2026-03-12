@@ -34,7 +34,7 @@ const RecipeCard = ({ recipe, onDelete, onEdit }) => {
 
     // Use recipe ID to generate consistent random image for each recipe
     const seed = recipe._id
-      ? recipe._id.split("").reduce((a, b) => a + b.charCodeAt(0), 0)
+      ? recipe._id.toString().split("").reduce((a, b) => a + b.charCodeAt(0), 0)
       : Math.random();
     const index = seed % foodImages.length;
     return foodImages[index];
