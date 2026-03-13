@@ -680,3 +680,25 @@ body::before {
   border-radius: 50%;
   animation: sparkle 3s ease-in-out infinite;
 }
+.auth-container {
+  max-width: 400px;
+  margin: auto;
+  padding: 30px;
+  background: white;
+  border-radius: 10px;
+}
+
+.auth-container input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.auth-container button {
+  width: 100%;
+  padding: 10px;
+  background: #ff7675;
+  border: none;
+  color: white;
+  font-weight: bold;
+}
