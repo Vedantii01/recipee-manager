@@ -9,36 +9,48 @@ const RecipeCard = ({ recipe, onDelete, onEdit }) => {
     }
   };
 
-  const getRandomFoodImage = () => {
-    const foodImages = [
-      "https://images.unsplash.com/photo-1525323610652-34199644285d",
-      "https://images.unsplash.com/photo-1546069901-ba9599127753",
-      "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38",
-      "https://images.unsplash.com/photo-1563729784404-70ca3a938c03",
-      "https://images.unsplash.com/photo-1564393356468-7fdecaac3b0a",
-      "https://images.unsplash.com/photo-1544787219-7f47ccb76574",
-      "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445",
-      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd",
-      "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
-      "https://images.unsplash.com/photo-1504674900247-0877df9cc836",
-    ];
+  const getCategoryImage = () => {
+    const category = recipe.category?.toLowerCase();
+
+    const images = {
+      breakfast: [
+        "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666",
+        "https://images.unsplash.com/photo-1484723091739-30a097e8f929",
+      ],
+      lunch: ["https://images.unsplash.com/photo-1512621776951-a57141f2eefd"],
+      dinner: [
+        "https://images.unsplash.com/photo-1504674900247-0877df9cc836",
+        "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+      ],
+      dessert: [
+        "https://images.unsplash.com/photo-1551024601-bec78aea704b",
+        "https://images.unsplash.com/photo-1563805042-7684c019e1cb",
+      ],
+      snack: ["https://images.unsplash.com/photo-1585238342024-78d387f4a707"],
+      beverage: [
+        "https://images.unsplash.com/photo-1497534446932-c925b458314e",
+      ],
+      other: ["https://images.unsplash.com/photo-1565299624946-b28f40a0ae38"],
+    };
+
+    const categoryImages = images[category] || images.other;
 
     const seed = recipe._id
       ? recipe._id
           .toString()
           .split("")
           .reduce((a, b) => a + b.charCodeAt(0), 0)
-      : Math.floor(Math.random() * 100);
+      : 0;
 
-    const index = seed % foodImages.length;
+    const index = seed % categoryImages.length;
 
-    return `${foodImages[index]}?auto=format&fit=crop&w=800&q=80`;
+    return `${categoryImages[index]}?auto=format&fit=crop&w=800&q=80`;
   };
 
   return (
     <div className="recipe-card">
       <div className="recipe-card-image">
-        <img src={getRandomFoodImage()} alt="recipe" className="recipe-image" />
+        <img src={getCategoryImage()} alt="recipe" className="recipe-image" />
 
         <div className="recipe-image-overlay">
           <span className="recipe-category">{recipe.category || "Food"}</span>
