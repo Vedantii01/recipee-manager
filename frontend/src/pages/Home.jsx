@@ -45,7 +45,7 @@ const Home = () => {
   return (
     <div className="home-page">
       <div className="home-header">
-        <h1>🔥 Recipe Vault</h1>
+        <h1> Cook Craft </h1>
         <Link to="/add-recipe" className="btn-add-recipe">
           ✨ Drop New Recipe
         </Link>

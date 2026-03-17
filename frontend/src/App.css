@@ -3,6 +3,7 @@
   padding: 0;
   box-sizing: border-box;
 }
+
 body {
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
@@ -17,10 +18,10 @@ body {
   );
 }
 .app {
-  width: 100%;
-  display: flex;
-  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
 }
+
 .main-container {
   width: 100%;
   max-width: 900px;
@@ -70,11 +71,21 @@ body::before {
   max-width: 100vw;
 }
 
+/* Auth Page Wrapper */
+.auth-page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
 /* Home Page Styles */
 .home-page {
+  max-width: 1200px;
+  margin: 0 auto; /* THIS centers everything */
   width: 100%;
-  max-width: 100%;
-  margin: 0;
 }
 
 .home-header {
@@ -115,13 +126,10 @@ body::before {
     transform: translateY(-3px);
   }
 }
-
 .recipes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 30px;
-  margin-top: 40px;
-  width: 100%;
 }
 
 /* Recipe Card Styles */
@@ -606,8 +614,12 @@ body::before {
   }
 
   .recipes-grid {
-    grid-template-columns: 1fr;
-    gap: 25px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 400px));
+    gap: 30px;
+
+    justify-content: center; /* ✅ center grid items */
+    width: 100%;
   }
 
   .recipe-card {
@@ -617,11 +629,10 @@ body::before {
   .recipe-card-content {
     padding: 20px;
   }
-
-  .recipe-header {
-    flex-direction: column;
-    gap: 15px;
-    text-align: center;
+  .home-header {
+    width: 100%;
+    max-width: 900px; /* ✅ keeps it centered with content */
+    margin: 0 auto 40px auto;
   }
 
   .recipe-actions {
@@ -682,23 +693,87 @@ body::before {
 }
 .auth-container {
   max-width: 400px;
-  margin: auto;
-  padding: 30px;
-  background: white;
-  border-radius: 10px;
+  margin: 50px auto;
+  padding: 40px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(248, 249, 250, 0.95)
+  );
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(255, 182, 193, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  text-align: center;
+}
+
+.auth-container h2 {
+  background: linear-gradient(45deg, #ff7675, #a29bfe, #55efc4);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 30px;
+  text-shadow: none;
+  filter: none;
 }
 
 .auth-container input {
   width: 100%;
-  padding: 10px;
+  padding: 15px;
   margin: 10px 0;
+  border: 2px solid rgba(255, 182, 193, 0.3);
+  border-radius: 15px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+}
+
+.auth-container input:focus {
+  outline: none;
+  border-color: #ff9ff3;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 20px rgba(255, 159, 243, 0.2);
 }
 
 .auth-container button {
   width: 100%;
-  padding: 10px;
-  background: #ff7675;
+  padding: 15px;
+  background: linear-gradient(135deg, #ff7675, #a29bfe, #55efc4);
   border: none;
   color: white;
-  font-weight: bold;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(255, 118, 117, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.auth-container button:hover {
+  background: linear-gradient(135deg, #55efc4, #a29bfe, #ff7675);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(255, 118, 117, 0.3);
+}
+
+.auth-container p {
+  margin-top: 20px;
+  color: #636e72;
+  font-size: 0.95rem;
+}
+
+.auth-container a {
+  color: #ff7675;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-container a:hover {
+  color: #a29bfe;
+  text-decoration: underline;
 }
